@@ -10,6 +10,7 @@ const todoSchema = new Schema({
     todoId: Number,
     userId: String,
     content: String,
+    checked: { type: Boolean, default: false },
     createdAt: {
         type: String,
         default: Date.now()

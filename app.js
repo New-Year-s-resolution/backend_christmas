@@ -23,17 +23,27 @@ const connect = require("./schemas");
 connect();
 
 
+//ejs
+app.set("views", __dirname + "/views");
+app.set("view engine", "ejs");
+
 //router
 const indexRouter = require("./router/index")
 const userRouter = require("./router/users")
 const commentRouter = require("./router/comment")
 const todoRouter = require("./router/todo")
 
-app.use('/', indexRouter)
+//app.use('/', indexRouter)
 app.use('/users', userRouter)
 app.use('/todo', todoRouter)
 app.use('/comments', commentRouter);
 
+
+
+
+app.get("/", (req, res, next) => {
+    res.render("index");
+});
 
 app.listen(port, () => {
     console.log(`App is ready at http://localhost:${port}`)
