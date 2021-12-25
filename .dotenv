@@ -1,1 +1,6 @@
+MONGO_URL=3.145.150.97:27017
+
 SECRET_KEY=2oindoi1ndih777
+MONGO_USER = 'test'
+MONGO_PASS = 'test'
+MONGO_DB = admin
