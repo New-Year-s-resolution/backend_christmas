@@ -3,7 +3,11 @@ const User = require('../schemas/users');
 require('dotenv').config();
 
 module.exports = async (req, res, next) => {
-  const { authorization } = req.headers;
+  //const { authorization } = req.headers;
+  const authorization = "Bearer eyJhbGciOiJIUzI1NiJ9.c2t5bGVyNjE4.lKtqSSjGGAbzszSJrFGvMMF_gGMxpi_uVgPQAY8Pd5k"
+
+
+
 
   if (!authorization) {
     res.status(401).send({

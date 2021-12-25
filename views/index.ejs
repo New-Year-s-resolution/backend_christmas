@@ -432,7 +432,7 @@
                      <div class="form-group has-feedback">
                         <input type="text" class="form-control" placeholder="✍️ Add item..."/>
                   
-                        <i class="fa fa-plus form-control-feedback add-btn" title="Add item"></i>
+                        <i class="fa fa-plus form-control-feedback add-btn"  title="Add item"></i>
                      </div>
                   </div>
                   <p class="err text-danger text-center hidden"><i class="fa fa-warning"></i> Oops! Please, enter name item</p>
@@ -463,6 +463,19 @@
 
 var state = [];
 
+function make_todo(content) {
+      console.log(content) 
+      var itemVal = $(".form-control").val();
+      console.log("hi")
+          $.ajax({
+            type: "POST",
+            url: `/todo`,
+            data: {content : itemVal},
+            success: function (response) {
+             
+            },
+          })
+        }
 function setDefaultState() {
     var id = generateID();
     var baseState = {};
@@ -516,14 +529,15 @@ function getState() {
 }
 
 function addItem(text, status, id, noUpdate) {
-    var id = id ? id : generateID();
+    console.log(id)
+    console.log(status)
     var c = status === "done" ? "danger" : "";
     var item =
         '<li data-id="' +
-        id +
+         status+
         '" class="animated flipInX ' +
         c +
-        '"><div class="checkbox"><span class="close"><i class="fa fa-times"></i></span><label><span class="checkbox-mask"></span><input type="checkbox" />' +
+        '"><div class="checkbox"><span class="close"><i class="fa fa-times delete_todo"></i></span><label><span class="checkbox-mask"></span><input type="checkbox" />' +
         text +
         "</label></div></li>";
 
@@ -582,11 +596,38 @@ $(function () {
         });
     }
 
-    $(".add-btn").on("click", function () {
-        var itemVal = $(".form-control").val();
-        addItem(itemVal);
-        formControl.focus();
-    });
+    $(".add-btn").on("click", function() {
+    var itemVal = $(".form-control").val();
+    console.log("this is test")
+    $.ajax({
+        type: "POST",
+        url: "todo",
+        data: { content: itemVal },
+        success: function (response) { // 성공하면
+         // console.log(response.id)
+ 
+          addItem(itemVal, response.id);
+        }
+      })
+
+    formControl.focus();
+  });
+ 
+  $(".delete_todo").on("click", function() {
+    var itemVal = $(".data-id").val()
+    console.log(itemVal , "to delete")
+    console.log("this is deleting the todo")
+    $.ajax({
+        type: "DELETE",
+        url: `todo/${itemVal}`,
+        data: { },
+        success: function (response) { // 성공하면
+      
+        }
+      })
+ 
+  });
+   
 
     $(".refresh").on("click", refresh);
 
@@ -756,4 +797,9 @@ $(document).ready(function () {
         }
     }
 }); 
+
+
+
+
+  
    </script>

@@ -29,14 +29,11 @@ router.post('/', authMiddleware, async (req, res) => {
 
     const { newContent } = req.body
     const user_id = res.locals.user.user_id
-
-    //console.log(userId)
-
-    //console.log("### testing ####")
     try {
 
         const newTodo = await Todo.create({ userId: user_id, content: newContent })
-        res.status(200).json({ isCreated: true })
+        const search = await Todo.findOne({ content: newContent })
+        res.status(200).json({ id: newTodo.id })
     } catch (error) {
         res.status(401).send(error.message)
     }
