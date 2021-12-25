@@ -27,6 +27,9 @@ connect();
 const indexRouter = require("./router/index")
 app.use('/', indexRouter)
 
+const todoRouter = require("./router/todo")
+app.use('/todo', todoRouter)
+
 
 app.listen(port, () => {
     console.log(`App is ready at http://localhost:${port}`)
