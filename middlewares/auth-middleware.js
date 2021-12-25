@@ -27,6 +27,7 @@ module.exports = async (req, res, next) => {
       .exec()
       .then((user) => {
         res.locals.user = user;
+        console.log('text')
 
         next();
       });
