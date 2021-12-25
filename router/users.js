@@ -12,8 +12,6 @@ router.post('/signUp', async (req, res, next) => {
         const { user_id, userNickname, password, confirmPassword } = req.body
         const existsUsers = await User.findOne({ user_id })
 
-
-        console.log(user_id, password)
         // 영문자로 시작하는 영문자 또는 숫자 6~20자
         const regUserIdExp = /^[a-zA-z]+[a-zA-z0-9]{5,19}$/g
         // 영문자로 시작하는 영문자 또는 숫자 6~20자
@@ -44,25 +42,52 @@ router.post('/signUp', async (req, res, next) => {
 
 //로그인 API - POST
 router.post('/signIn', async (req, res) => {
-    const { userId, password } = req.body
+    try {
+        const { user_id, password } = req.body
 
-    console.log('sign In', userId, password)
+        const user = await User.findOne({ user_id })
+        console.log('user===', user);
 
-    const user = await User.findOne({ userId })
+        //만약 user가 없거나
+        //password가, 찾은 nickname의 password와 일치하지 않는다면
+        //에러메세지를 보낸다
+        if (!user) {
+            res.status(400).send({
+                sucess: false,
+                //일부러 error message를 모호하게 말해준다.
+                errorMessage: '닉네임 또는 패스워드를 확인해주세요.',
+            })
+            if (!bcrypt.compareSync(password, user.password)) {
+                return res.status(401).send({
+                    success: false,
+                    msg: '아이디 또는 패스워드를 확인해주세요.',
+                });
+            }
 
-    //만약 user가 없거나
-    //password가, 찾은 nickname의 password와 일치하지 않는다면
-    //에러메세지를 보낸다
-    if (!user || password !== user.password) {
-        res.status(400).send({
-            //일부러 error message를 모호하게 말해준다.
-            errorMessage: '닉네임 또는 패스워드를 확인해주세요.',
-        })
-        return
+        } else {
+            //console.log("Test")
+            const user_id = user['user_id'];
+            const userNickname = user['userNickname'];
+
+            const token = jwt.sign(user_id, "2oindoi1ndih777");
+            res.status(201).send({
+                sucess: true,
+                token,
+                user_id,
+                userNickname,
+                msg: "성공적으로 로그인 되었습니다"
+            })
+        }
+    } catch (err) {
+        // 예측하지 못한 에러 발생(Internal Server Error)
+        console.log('로그인 API에서 발생한 에러: ', err);
+        res
+            .status(500).send({
+                sucess: false,
+                //일부러 error message를 모호하게 말해준다.
+                errorMessage: '예상치 못한 에러가 발생했습니다.',
+            })
     }
-    //send token
-    const token = jwt.sign({ userObjectId: user.userObjectId }, 'artube-secret-key')
-    res.send({ token })
 })
 
 // router.get("/me", authMiddleware, async (req, res) => {

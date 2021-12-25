@@ -33,7 +33,7 @@ router.post('/', authMiddleware, async (req, res) => {
     console.log(userId)
     try {
         //const todoContent = { userId: 1, content: newContent }
-        const newTodo = await Todo.create({ userId: 1, content: newContent })
+        const newTodo = await Todo.create({ userId, content: newContent })
         res.status(200).json({ isCreated: true })
     } catch (error) {
         res.status(401).send(error.message)
