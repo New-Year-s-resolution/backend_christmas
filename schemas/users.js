@@ -1,7 +1,7 @@
 const mongoose = require("mongoose")
 const { Schema } = mongoose
 const autoIncrement = require('mongoose-auto-increment');
-var connection = mongoose.createConnection("mongodb://localhost:27017/opendoor");
+var connection = mongoose.createConnection("mongodb://localhost:27017/nodejjang");
 autoIncrement.initialize(connection);
 
 
