@@ -26,11 +26,13 @@ connect();
 //router
 const indexRouter = require("./router/index")
 const userRouter = require("./router/users")
+const commentRouter = require("./router/comment")
+const todoRouter = require("./router/todo")
+
 app.use('/', indexRouter)
 app.use('/users', userRouter)
-
-const todoRouter = require("./router/todo")
 app.use('/todo', todoRouter)
+app.use('/comments', commentRouter);
 
 
 app.listen(port, () => {
