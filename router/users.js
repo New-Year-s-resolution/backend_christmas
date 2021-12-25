@@ -12,8 +12,6 @@ router.post('/signUp', async (req, res, next) => {
         const { user_id, userNickname, password, confirmPassword } = req.body
         const existsUsers = await User.findOne({ user_id })
 
-
-        console.log(user_id, password)
         // 영문자로 시작하는 영문자 또는 숫자 6~20자
         const regUserIdExp = /^[a-zA-z]+[a-zA-z0-9]{5,19}$/g
         // 영문자로 시작하는 영문자 또는 숫자 6~20자
@@ -48,7 +46,8 @@ router.post('/signIn', async (req, res) => {
 
     console.log('sign In', userId, password)
 
-    const user = await User.findOne({ userId })
+    const user = await User.findOne({ user_id: userId })
+    console.log('user===', user);
 
     //만약 user가 없거나
     //password가, 찾은 nickname의 password와 일치하지 않는다면
