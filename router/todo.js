@@ -1,6 +1,7 @@
 const express = require("express")
 const router = express.Router()
 const Todo = require("../schemas/todos")
+const authMiddleware = require("../middlewares/auth-middleware")
 
 
 router.get('/', async (req, res) => {
@@ -16,19 +17,23 @@ router.get('/', async (req, res) => {
             res.status(401).send("Wrong access")
         }
         // mapping to new item name   (ex userId , user_id)
+
     } catch (error) {
         res.status(401).send(error.message)
     }
 
 });
 
-router.post('/', async (req, res) => {
+router.post('/', authMiddleware, async (req, res) => {
     console.log(" Writing new todo")
 
-    const { content, userId } = req.body
+    const { newContent } = req.body
+    const { userId } = res.locals.user;
+
+    console.log(userId)
     try {
-        // const potato = {a: potato , b: sweetpottao }  
-        // const newTodo = Todo.create({ content: potato })
+        //const todoContent = { userId: 1, content: newContent }
+        const newTodo = await Todo.create({ userId: 1, content: newContent })
         res.status(200).json({ isCreated: true })
     } catch (error) {
         res.status(401).send(error.message)
@@ -36,10 +41,12 @@ router.post('/', async (req, res) => {
 
 });
 
-router.put("/:todoId", async (req, res) => {
+router.put("/:todoId", authMiddleware, async (req, res) => {
     console.log(" Updating todo ")
     const { todoId } = req.params
     const { newContent } = req.body
+    const { userId } = res.locals.user;
+    console.log(userId)
     const query = { todoId };
     try {
         await Todo.findByIdAndUpdate({ query, content: newContent })
@@ -51,9 +58,11 @@ router.put("/:todoId", async (req, res) => {
 
 
 
-router.delete('/:todoId', async function (req, res) {
+router.delete('/:todoId', authMiddleware, async function (req, res) {
     res.send("deleting todo")
     const { todoId } = req.params
+    const { userId } = res.locals.user;
+    console.log(userId)
 
     try {
         Todo.deleteOne({ todoId })
