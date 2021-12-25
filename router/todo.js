@@ -1,6 +1,7 @@
 const express = require("express")
 const router = express.Router()
 const Todo = require("../schemas/todos")
+const authMiddleware = require("../middlewares/auth-middleware")
 
 
 router.get('/', async (req, res) => {

@@ -10,49 +10,31 @@ const setRounds = 10;
 router.post('/signUp', async (req, res, next) => {
     try {
         const { user_id, userNickname, password, confirmPassword } = req.body
-        const existsUsers = await User.findOne({user_id })
+        const existsUsers = await User.findOne({ user_id })
 
-
-        console.log(user_id, password)
         // 영문자로 시작하는 영문자 또는 숫자 6~20자
         const regUserIdExp = /^[a-zA-z]+[a-zA-z0-9]{5,19}$/g
         // 영문자로 시작하는 영문자 또는 숫자 6~20자
-        const regUserNickname = /^[가-힣]+$/
-        // 8 ~ 16자 영문, 숫자, 특수문자를 최소 한가지씩 조합
-        const regUserPasswordExp =/^(?=.*[a-zA-z])(?=.*[0-9])(?=.*[$`~!@$!%*#^?&\\(\\)\-_=+]).{8,16}$/
+        const regUserNickname = /^[a-zA-z]+[a-zA-z0-9]{5,19}$/g
+        // 
+        const regUserPasswordExp = /^(?=.*[a-zA-z])(?=.*[0-9])(?=.*[$`~!@$!%*#^?&\\(\\)\-_=+]).{8,16}$/
 
         if (user_id.search(regUserIdExp) == -1) {
             return res.status(401).send({
                 errorMessage: 'ID 형식이 일치하지 않습니다.',
             })
-        } else if (userNickname.search(regUserNickname == -1)){
+        } else if (userNickname.search(regUserNickname) == -1) {
             return res.status(401).send({
                 errorMessage: '닉네임 형식이 일치하지 않습니다.',
             })
-        }else if (password.search(regUserPasswordExp) == -1) {
-            return res.status(400).send({
-                errorMessage: '패스워드의 형식이 일치하지 않습니다.',
-            })
-        } else if (password.includes(userId)) {
-            return res.status(400).send({
-                errorMessage: '비밀번호에 아이디가 포함되어있습니다.',
-            })
-        } else if (password !== confirmPassword) {
-            return res.status(400).send({
-                errorMessage: '패스워드가 패스워드 확인란과 다릅니다.',
-            })
-        } else if (existsUsers) {
-            return res.status(400).send({
-                errorMessage: '아이디 또는 닉네임을 이미 사용중입니다.',
-            })
-        }
+        } else { }
         const salt = bcrypt.genSaltSync(setRounds);
-        const hashedPassword = bcrypt.hashSync(userPw, salt);
+        const hashedPassword = bcrypt.hashSync(password, salt);
 
-        const user = new User({ user_id:user_id, password:hashedPassword })
+        const user = new User({ user_id: user_id, password: hashedPassword })
         await user.save()
 
-        res.status(201).send({ result : "sucess"})
+        res.status(201).send({ result: "sucess" })
     } catch (err) {
         next(err)
     }
@@ -63,7 +45,8 @@ router.post('/signIn', async (req, res) => {
     try {
     const { user_id, password } = req.body
 
-    const user = await User.findOne({ user_id })
+    const user = await User.findOne({ user_id: userId })
+    console.log('user===', user);
 
     //만약 user가 없거나
     //password가, 찾은 nickname의 password와 일치하지 않는다면
