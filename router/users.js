@@ -5,7 +5,7 @@ const User = require('../schemas/users')
 const bcrypt = require('bcrypt');
 const setRounds = 10;
 require('dotenv').config();
-// const authMiddleware = require('../middlewares/auth-middleware')
+const authMiddleware = require('../middlewares/auth-middleware')
 
 // 회원가입 API - POST
 router.post('/signUp', async (req, res, next) => {
@@ -58,14 +58,14 @@ router.post('/signIn', async (req, res) => {
                 //일부러 error message를 모호하게 말해준다.
                 errorMessage: '닉네임 또는 패스워드를 확인해주세요.',
             })
+
+        } else {
             if (!bcrypt.compareSync(password, user.password)) {
                 return res.status(401).send({
                     success: false,
                     msg: '아이디 또는 패스워드를 확인해주세요.',
                 });
             }
-
-        } else {
             //console.log("Test")
             const user_id = user['user_id'];
             const userNickname = user['userNickname'];
@@ -102,6 +102,14 @@ function createJwtToken(user_id) {
 //     });
 // });
 
+router.get("/me", authMiddleware, async (req, res) => {
+    const { user } = res.locals;
+    res.send({
+        user: {
+            id: user_id,
+        },
+    });
+});
 
 // router.post('/login', async (req, res) => {
 //     console.log(" login API")

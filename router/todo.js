@@ -1,7 +1,7 @@
 const express = require("express")
 const router = express.Router()
 const Todo = require("../schemas/todos")
-// const authMiddleware = require("../middlewares/auth-middleware")
+const authMiddleware = require("../middlewares/auth-middleware")
 
 
 router.get('/', async (req, res) => {
@@ -28,12 +28,14 @@ router.post('/', authMiddleware, async (req, res) => {
     console.log(" Writing new todo")
 
     const { newContent } = req.body
-    const { userId } = res.locals.user;
+    const user_id = res.locals.user.user_id
 
-    console.log(userId)
+    //console.log(userId)
+
+    //console.log("### testing ####")
     try {
-        //const todoContent = { userId: 1, content: newContent }
-        const newTodo = await Todo.create({ userId, content: newContent })
+
+        const newTodo = await Todo.create({ userId: user_id, content: newContent })
         res.status(200).json({ isCreated: true })
     } catch (error) {
         res.status(401).send(error.message)
@@ -45,12 +47,27 @@ router.put("/:todoId", authMiddleware, async (req, res) => {
     console.log(" Updating todo ")
     const { todoId } = req.params
     const { newContent } = req.body
-    const { userId } = res.locals.user;
-    console.log(userId)
-    const query = { todoId };
+    const user_id = res.locals.user.user_id
+
+
+
     try {
-        await Todo.findByIdAndUpdate({ query, content: newContent })
-        res.status(200).json({ isUpdated: true })
+        console.log(todoId)
+        const isExist = await Todo.findOne({ id: todoId })
+        console.log(isExist)
+        if (isExist.userId === user_id) {
+
+            //await Todo.findOneAndUpdate({ id: todoId, content: newContent })
+            const filter = { id: todoId };
+            const update = { content: newContent };
+            let newTodo = await Todo.findOneAndUpdate(filter, update);
+            res.status(200).json({ isUpdated: true })
+        }
+
+        else {
+
+            res.status(401).send("Wrong access")
+        }
     } catch (error) {
         res.status(401).send(error.message)
     }
@@ -59,17 +76,18 @@ router.put("/:todoId", authMiddleware, async (req, res) => {
 
 
 router.delete('/:todoId', authMiddleware, async function (req, res) {
-    res.send("deleting todo")
+    console.log("deleting todo")
     const { todoId } = req.params
-    const { userId } = res.locals.user;
-    console.log(userId)
-
-    try {
-        Todo.deleteOne({ todoId })
-        res.status(200).json({ isDeleted: true })
-    } catch (error) {
-        res.status(401).send(error.message)
+    const user_id = res.locals.user.user_id
+    const isExist = await Todo.findOne({ id: todoId })
+    if (isExist.userId === user_id) {
+        await Todo.deleteOne({ id: todoId })
+        res.status(200).json({ isUpdated: true })
     }
+    else {
+        res.status(401).json({ isUpdated: false })
+    }
+
 });
 
 
