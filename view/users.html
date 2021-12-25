@@ -93,15 +93,15 @@
                 $("#help-password").text("사용할 수 있는 비밀번호입니다.").removeClass("is-danger").addClass("is-success")
             }
             if (password2 == "") {
-                $("#help-password2").text("비밀번호를 입력해주세요.").removeClass("is-safe").addClass("is-danger")
-                $("#input-password2").focus()
+                $("#help-confirmPassoword").text("비밀번호를 입력해주세요.").removeClass("is-safe").addClass("is-danger")
+                $("#input-confirmPassoword").focus()
                 return;
             } else if (password2 != password) {
-                $("#help-password2").text("비밀번호가 일치하지 않습니다.").removeClass("is-safe").addClass("is-danger")
-                $("#input-password2").focus()
+                $("#help-confirmPassoword").text("비밀번호가 일치하지 않습니다.").removeClass("is-safe").addClass("is-danger")
+                $("#input-confirmPassoword").focus()
                 return;
             } else {
-                $("#help-password2").text("비밀번호가 일치합니다.").removeClass("is-danger").addClass("is-success")
+                $("#help-confirmPassoword").text("비밀번호가 일치합니다.").removeClass("is-danger").addClass("is-success")
             }
             $.ajax({
                 type: "POST",
@@ -126,7 +126,7 @@
             $("#btn-check-dup").toggleClass("is-hidden")
             $("#help-id").toggleClass("is-hidden")
             $("#help-password").toggleClass("is-hidden")
-            $("#help-password2").toggleClass("is-hidden")
+            $("#help-confirmPassoword").toggleClass("is-hidden")
         }
 
         function is_nickname(asValue) {
@@ -191,14 +191,14 @@
                     <div class="content">
                         <div class="field has-addons">
                             <div class="control has-icons-left" style="width:100%">
-                                <input id="input-username" class="input" type="text" placeholder="아이디">
+                                <input id="input-userId" class="input" type="text" placeholder="아이디">
                                 <span class="icon is-small is-left"><i class="fa fa-user"></i></span>
                             </div>
 
                         </div>
                         <div class="field has-addons">
                             <div class="control has-icons-left" style="width:100%">
-                                <input id="input-username" class="input" type="text" placeholder="닉네임">
+                                <input id="input-userNcikname" class="input" type="text" placeholder="닉네임">
                                 <span class="icon is-small is-left"><i class="fa fa-user"></i></span>
                             </div>
 
@@ -238,11 +238,11 @@
                         <div class="mb-5">
                             <div class="field">
                                 <div class="control has-icons-left" style="width:100%">
-                                    <input id="input-password2" class="input" type="password"
+                                    <input id="input-confirmPassoword" class="input" type="password"
                                            placeholder="비밀번호 재입력">
                                     <span class="icon is-small is-left"><i class="fa fa-lock"></i></span>
                                 </div>
-                                <p id="help-password2" class="help is-hidden">비밀번호를 다시 한 번 입력해주세요.</p>
+                                <p id="help-confirmPassoword" class="help is-hidden">비밀번호를 다시 한 번 입력해주세요.</p>
 
                             </div>
                         </div>
