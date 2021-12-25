@@ -25,7 +25,9 @@ connect();
 
 //router
 const indexRouter = require("./router/index")
+const userRouter = require("./router/users")
 app.use('/', indexRouter)
+app.use('/users', userRouter)
 
 const todoRouter = require("./router/todo")
 app.use('/todo', todoRouter)
