@@ -4,6 +4,7 @@ const jwt = require('jsonwebtoken')
 const User = require('../schemas/users')
 const bcrypt = require('bcrypt');
 const setRounds = 10;
+require('dotenv').config();
 // const authMiddleware = require('../middlewares/auth-middleware')
 
 // 회원가입 API - POST
@@ -85,6 +86,10 @@ router.post('/signIn', async (req, res) => {
     })
   }
 })
+
+function createJwtToken(user_id) {
+    return jwt.sign({ user_id }, process.env.SECRET_KEY, { expiresIn: '24h' });
+  }
 
 // router.get("/me", authMiddleware, async (req, res) => {
 //     const { user } = res.locals;

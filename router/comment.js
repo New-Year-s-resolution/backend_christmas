@@ -1,11 +1,11 @@
 const express = require('express');
 const router = express.Router();
 
-const sanitize = require('../lib/sanitizeHtml');
+const sanitize = require('sanitize-html');
 const jwt = require('jsonwebtoken');
 const moment = require('moment');
 const ERROR = require('../data/error')
-const authMiddleware = require("../middlewares/auth-middleware")
+// const authMiddleware = require("../middlewares/auth-middleware")
 require('moment-timezone');
 require('dotenv').config();
 
