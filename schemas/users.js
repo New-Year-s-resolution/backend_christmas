@@ -8,10 +8,9 @@ autoIncrement.initialize(connection);
 const userSchema = new Schema({
 
     userId: Number,
-    name: String,
-    email: String,
-    password: String,
-    institute: String
+    user_id: String,
+    userNickname: String,
+    password: String
 
 })
 
