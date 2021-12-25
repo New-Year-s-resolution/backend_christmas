@@ -91,4 +91,38 @@ router.delete('/:todoId', authMiddleware, async function (req, res) {
 });
 
 
+router.put('/:todoId/check', authMiddleware, async function (req, res) {
+    const todoId = req.params.todoId;
+    const user_id = res.locals.user.user_id;
+    let todoItem, check;
+
+    if (!user_id) {
+        throw new Error(ERROR.INVALID_AUTH);
+    }
+
+    todoItem = await Todo.findOne({ id: todoId })
+
+    if(!todoItem){
+        throw new Error(ERROR.NO_EXISTS_DATA);
+    }
+
+    try {
+
+        if(todoItem.checked == true) { 
+            check = false
+        }else{
+            check = true
+        }
+
+        await Todo.updateOne({ id : todoId }, { $set : { checked : check }});
+
+        todoItem = await Todo.findOne({ id: todoId })
+        
+        res.json({ msg: 'success', data: todoItem });
+    } catch (err) {
+        console.log(err);
+        res.json({ msg: 'fail' });
+    }
+});
+
 module.exports = router
