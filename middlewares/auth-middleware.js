@@ -20,11 +20,23 @@ module.exports = (req, res, next) => {
   }
 
   try {
-    const { userObjectId } = jwt.verify(tokenValue, process.env.SECRET_KEY);
-    User.findById(userObjectId).then((user) => {
-      res.locals.user = user;
+    jwt.verify(tokenValue, process.env.SECRET_KEY,async(error,decoded) =>{
+      if(error) {
+        return res.status(401).send({
+          errorMessage: "로그인 후 이용 가능한 기능입니다.",
+        });
+      }
+    });
+    const user = await User.findOne(
+      {user_id: decoded.user_id},
+    );
+    if(!user) {
+      return res.status(401).send({
+        errorMessage: "존재하지 않는 회원입니다",
+      });
+    }
+    req.user = user;
       next();
-    }).catch(err=>console.log(err))
   } catch (err) {
     res.status(401).send({
       errorMessage: "로그인 후 이용 가능한 기능입니다.",
