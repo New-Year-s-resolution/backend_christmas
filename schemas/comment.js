@@ -9,9 +9,12 @@ const comment = new Schema(
 		comment_content: { type: String, required: true },
 		comment_target_id: { type: String, required: true },
 		user_id: { type: String, required: true, index: true },
-		created_at: { type: Date, required: true },
-        archived: { type: Number, required: true},
-        archived_at: { type: Date, required: true}
+		createdAt: {
+			type: String,
+			default: Date.now()
+		},
+        archived: { type: Number, default: null },
+        archived_at: { type: Date, default: null }
 	},
 	{ timestamps: true }
 );

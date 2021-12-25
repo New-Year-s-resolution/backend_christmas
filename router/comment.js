@@ -4,11 +4,13 @@ const sanitize = require('sanitize-html');
 const jwt = require('jsonwebtoken');
 const moment = require('moment');
 const ERROR = require('../data/error')
-// const authMiddleware = require("../middlewares/auth-middleware")
+const authMiddleware = require("../middlewares/auth-middleware")
 require('moment-timezone');
 require('dotenv').config();
 
-const { Post, Comment, User } = require('../schemas');
+const User = require('../schemas/users')
+const Todo = require("../schemas/todos")
+const Comment = require("../schemas/comment")
 
 // 댓글 리스트
 router.get('/:postId', async (req, res) => {
@@ -17,7 +19,7 @@ router.get('/:postId', async (req, res) => {
     let postItem;
 
     try {
-        postItem = await Post.findOne({ post_id: postId })
+        postItem = await Todo.findOne({ _id: postId })
 
         if (!postItem) {
             throw new Error(ERROR.NO_EXISTS_DATA)
@@ -45,25 +47,28 @@ router.get('/:postId', async (req, res) => {
 });
 
 // 댓글 입력
-router.post('/:postId', async (req, res) => {
-    const postId = req.params.cardId;
-    // const user = res.locals.user;
+router.post('/:postId', authMiddleware, async (req, res) => {
+    const postId = req.params.postId;
+    const user_id = res.locals.user.user_id;
 
-    if (!user) {
+    if (!user_id) {
         throw new Error(ERROR.INVALID_AUTH);
     }
+
+    console.log('postId', postId);
 
     try {
 
         let data = {
             comment_target_id: postId,
-            comment_content: sanitize(req.body.commentContents),
-            user_id: sanitize(user.id),
-            created_at: moment().format('YYYY-MM-DDT+'),
-            date: Date.now()
+            comment_content: req.body.commentContents,
+            user_id: user_id,
         };
 
-        await Comment.create(data);
+        console.log('test===')
+
+        let result = await Comment.create(data);
+        console.log('result===', result);
 
         res.json({ msg: 'success', result: result });
     } catch (err) {
@@ -73,26 +78,31 @@ router.post('/:postId', async (req, res) => {
 });
 
 // 댓글 삭제
-router.delete('/:commentId', async (req, res) => {
+router.delete('/:commentId', authMiddleware, async (req, res) => {
     const uid = req.params.commentId;
-    const user = res.locals.user;
+    const user_id = res.locals.user.user_id;
 
-    if (!user) {
+
+
+    if (!user_id) {
         throw new Error(ERROR.INVALID_AUTH);
     }
 
+    console.log('1==')
+
     try {
-        let commentItem = await Comment.findOne({ _id: uid, userId: user.id });
+        let commentItem = await Comment.findOne({ _id: uid, userId: user_id });
 
         if (!commentItem) {
             throw new Error(ERROR.NO_EXISTS_DATA)
         }
 
-        const { deletedCount } = await Comment.deleteOne({ _id: commentItem._id, userId: user.id });
+        const { deletedCount } = await Comment.deleteOne({ _id: commentItem._id, userId: user_id });
         if (!deletedCount) {
             throw new Error(ERROR.FAILURE_DATA)
         }
 
+        res.json({ msg: 'success' });
     } catch (err) {
         console.log('err', err);
         res.json({ msg: 'fail' })
